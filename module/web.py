@@ -1,6 +1,5 @@
-from module import ModuleObject
-import BaseHTTPServer
-import SimpleHTTPServer
+from module.gen import ModuleObject
+import http
 import ssl
 import os
 
@@ -20,18 +19,18 @@ class WebModule(ModuleObject):
     def run_action(self):
         current_cwd = os.getcwd()
         self.ui.print_msg("Starting web server on port %s" % self.vars["port"][0])
-        print "\033[33m"
+        print("\033[33m")
         try:
-            httpd = BaseHTTPServer.HTTPServer(('0.0.0.0', int(self.vars["port"][0])), SimpleHTTPServer.SimpleHTTPRequestHandler)
+            httpd = http.server(('0.0.0.0', int(self.vars["port"][0])))
             if self.vars["https"][0].lower() == "true":
                 httpd.socket = ssl.wrap_socket(httpd.socket, certfile=self.vars["certificate"][0], server_side=True)
             os.chdir(self.vars["folder"][0])
             httpd.serve_forever()
         except KeyboardInterrupt:
-            print "\033[00m"
+            print("\033[00m")
             self.ui.print_msg("Stopping web server")
         except:
-            print "\033[00m"
+            print("\033[00m")
             self.ui.print_error("The web server raised an exception")
             
         os.chdir(current_cwd)

